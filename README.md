@@ -14,13 +14,9 @@ yarn deploy-local # to deploy the subgraph to a local graph node
 ```
 
 ## Usage
-Explain how to use your project. Provide examples of the project in action.
 
-## Contributing
-If you want others to contribute to your project, provide instructions on how they can do so.
-
-## License
-Include information about the license under which your project is distributed.
-
-## Contact
-Provide contact information for people who want to get in touch with you regarding the project.
+- Update the graphql file to add new types
+- Run `yarn codegen` to generate types
+- Run `yarn build` to build the subgraph
+- Run `yarn deploy-local` to deploy the subgraph to a local graph node
+- For hosted deployment, create an account on subquery.network and deploy the subgraph
