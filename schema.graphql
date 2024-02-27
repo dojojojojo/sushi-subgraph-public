@@ -1,0 +1,116 @@
+enum NFTAction {
+  Transfer
+  Mint
+  Burn
+  Swap
+}
+
+"""
+General data of all the transfers
+"""
+type Transfer @entity {
+    id: ID!
+    txHash: String!
+    date: Int!
+    action: NFTAction!
+
+    from: String!
+    to: String!
+    amount: BigInt!
+    
+    block: BigInt!
+    timestamp: BigInt!
+}
+
+
+"""
+General data of all the burns
+"""
+type Burn @entity {
+    id: ID!
+    txHash: String!
+    date: Int!
+    action: NFTAction!
+
+    sender: String!
+    tokenId: BigInt!
+    
+    block: BigInt!
+    timestamp: BigInt!
+}
+
+
+"""
+General data of all the mints
+"""
+type Mint @entity {
+    id: ID!
+    txHash: String!
+    date: Int!
+    action: NFTAction!
+
+    minter: String!
+    owner: String!
+    tokenId: BigInt!
+    shouldMint: Boolean!
+    
+    block: BigInt!
+    timestamp: BigInt!
+}
+
+
+type Swap @entity {
+    id: ID!
+    txHash: String!
+    date: Int!
+    action: String!
+
+    sender: String!
+    receiver: String!
+    offerAsset: String!
+    askAsset: String!
+    offerAmount: BigInt!
+    returnAmount: BigInt!
+    spreadAmount: BigInt!
+    commissionAmount: BigInt!
+    
+    block: BigInt!
+    timestamp: BigInt!
+}
+
+"""
+General data of all the harvests
+"""
+type Harvest @entity {
+    id: ID!
+    txHash: String!
+    date: Int!
+    action: String!
+
+    address: String!
+    offeringAmount: BigInt!
+    refundAmount: BigInt!
+    shouldMint: Boolean!
+    
+    block: BigInt!
+    timestamp: BigInt!
+}
+
+
+"""
+General data of all the claims
+"""
+type AirdropClaim @entity {
+    id: ID!
+    txHash: String!
+    date: Int!
+    action: String!
+
+    stage: String!
+    address: String!
+    amount: BigInt!
+    shouldMint: Boolean!
+
+    block: BigInt!
+    timestamp: BigInt!
+}
