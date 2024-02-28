@@ -46,7 +46,7 @@ const project: CosmosProject = {
             filter: {
               type: "wasm",
               attributes: {
-                _contract_address: "inj12eca9xszt84qm9tztyuje96nn3v2wd3v4yrzge",
+                _contract_address: "inj12eca9xszt84qm9tztyuje96nn3v2wd3v4yrzge", // pair address
               },
             },
           },
@@ -57,26 +57,6 @@ const project: CosmosProject = {
               type: "wasm",
               attributes: {
                 _contract_address: "inj1n73yuus64z0yrda9hvn77twkspc4uste9j9ydd", // sushi
-              },
-            },
-          },
-          {
-            handler: "handleNFT",
-            kind: CosmosHandlerKind.Event,
-            filter: {
-              type: "wasm",
-              attributes: {
-                _contract_address: "inj1u2zs6hwmygc3aeqerstz4h82hatj3852h7dh4a", // launchpad
-              },
-            },
-          },
-          {
-            handler: "handleNFT",
-            kind: CosmosHandlerKind.Event,
-            filter: {
-              type: "wasm",
-              attributes: {
-                _contract_address: "inj1mu202y7un7ye2ayu3fx6smj9l5eddfxaa4qu4f", // airdrop
               },
             },
           },

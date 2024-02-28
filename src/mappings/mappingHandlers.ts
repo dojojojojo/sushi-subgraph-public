@@ -78,40 +78,6 @@ export async function handleNFT(event: CosmosEvent): Promise<void> {
         }
     })
 
-    const airdropContract = 'inj1mu202y7un7ye2ayu3fx6smj9l5eddfxaa4qu4f';
-    const claimEvents = allData.filter((e) => e.action === "claim");
-    claimEvents.forEach((claimEvent, index) => {
-        if (claimEvent && claimEvent._contract_address === airdropContract) {
-            claimEvent.swapIndex = index;
-
-            // find mint such that to address is same as swap to address
-            const mintEvents = allData.filter((e) => e.action === "mint" && e.owner === claimEvent.address);
-            mintEvents.forEach((e) => {
-                e.claimFromKnownID = true;
-                e.amount = claimEvent.amount;
-            })
-        }
-    });
-
-    const launchpadContract = 'inj1u2zs6hwmygc3aeqerstz4h82hatj3852h7dh4a';
-    const harvestEvents = allData.filter((e) => {
-        if(e.action && typeof e.action === "string"){
-            return e.action.includes("harvest")
-        }
-    });
-    harvestEvents.forEach((harvestEvent, index) => {
-        if (harvestEvent && harvestEvent._contract_address === launchpadContract) {
-            harvestEvent.swapIndex = index;
-
-            // find mint such that to address is same as swap to address
-            const mintEvents = allData.filter((e) => e.action === "mint" && e.owner === harvestEvent.address);
-            mintEvents.forEach((e) => {
-                e.harvestFromKnownID = true;
-                e.amount = harvestEvent.refund_amount;
-            })
-        }
-    });
-
     for (let i = 0; i < allData.length; i++) {
         const data = allData[i];
         try {
@@ -135,16 +101,6 @@ export async function handleNFT(event: CosmosEvent): Promise<void> {
                 data.id = id.concat("-").concat(data.swapIndex);
                 await handleSwap(data.id, timestamp, dayStartTimestamp, { ...data });
             }
-            if (data.action === "harvest") {
-                data.action = "harvest";
-                data.id = id.concat("-").concat(data.address)
-                await handleHarvestEvent(data.id, timestamp, dayStartTimestamp, { ...data });
-            }
-            if (data.action === "claim") {
-                data.action = "claim";
-                data.id = id.concat("-").concat(data.address)
-                await handleAirdropEvent(data.id, timestamp, dayStartTimestamp, { ...data });
-            }
         } catch (err) {
             logger.error(err)
         }
@@ -155,7 +111,7 @@ export async function handleNFT(event: CosmosEvent): Promise<void> {
 
 export async function handleMint(id: any, date: any, day: any, transformedObj: any) {
     let amount = Number(transformedObj.amount || 0) / Number(10 ** 18);
-    const correctMint = (transformedObj.swapFromKnownID && amount >=0.5) || transformedObj.harvestFromKnownID || transformedObj.claimFromKnownID;
+    const correctMint = (transformedObj.swapFromKnownID && amount >=0.5);
 
     const data = {
         id: id,
@@ -230,43 +186,4 @@ export async function handleSwap(id: any, date: any, day: any, transformedObj: a
     const swap = Swap.create(data);
     await swap.save()
     logger.info(`saving swap, ${JSON.stringify(swap)}`);
-}
-
-
-export async function handleHarvestEvent(id: any, date: any, day: any, transformedObj: any) {
-    const data = {
-        id: id,
-        txHash: transformedObj.txHash,
-        date: day,
-        // day: day,
-        action: transformedObj.action,
-        address: transformedObj.address,
-        offeringAmount: BigInt(transformedObj.offering_amount),
-        refundAmount: BigInt(transformedObj.refund_amount),
-        shouldMint: true,
-        timestamp: transformedObj.timestamp,
-        block: transformedObj.block,
-    };
-    const harvest = Harvest.create(data);
-    await harvest.save()
-    logger.info(`saving harvest, ${JSON.stringify(harvest)}`);
-}
-
-export async function handleAirdropEvent(id: any, date: any, day: any, transformedObj: any) {
-    const data = {
-        id: id,
-        txHash: transformedObj.txHash,
-        date: day,
-        // day: day,
-        action: transformedObj.action,
-        stage: transformedObj.stage,
-        address: transformedObj.address,
-        amount: BigInt(transformedObj.amount),
-        shouldMint: true,
-        timestamp: transformedObj.timestamp,
-        block: transformedObj.block,
-    };
-    const airdrop = AirdropClaim.create(data);
-    await airdrop.save()
-    logger.info(`saving airdrop, ${JSON.stringify(airdrop)}`);
 }
