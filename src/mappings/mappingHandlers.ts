@@ -30,9 +30,9 @@ export async function handleNFT(event: CosmosEvent): Promise<void> {
 
     const id = event.tx.hash;
     const log = event.log;
-    const logEvents = log.events;
+    const logEvents = event.msg.tx.tx.events as any;
 
-    const wasmEvents = logEvents.filter((e) => e.type === "wasm"); // should always exist
+    const wasmEvents = logEvents.filter((e: { type: string; }) => e.type === "wasm"); // should always exist
     if (wasmEvents.length == 0) {
         return;
     }
@@ -111,7 +111,7 @@ export async function handleNFT(event: CosmosEvent): Promise<void> {
 
 export async function handleMint(id: any, date: any, day: any, transformedObj: any) {
     let amount = Number(transformedObj.amount || 0) / Number(10 ** 18);
-    const correctMint = (transformedObj.swapFromKnownID && amount >=0.5);
+    const correctMint = (transformedObj.swapFromKnownID && amount >= 0.5);
 
     const data = {
         id: id,
